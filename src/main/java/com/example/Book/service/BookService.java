@@ -2,9 +2,12 @@ package com.example.Book.service;
 
 import com.example.Book.dto.BookDto;
 import com.example.Book.dto.ReviewDto;
+import com.example.Book.dto.ReviewResponseDto;
 import com.example.Book.entity.Book;
 import com.example.Book.entity.Review;
 import com.example.Book.repository.BookRepository;
+import com.example.Book.repository.ReviewRepository;
+import com.example.Book.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +21,8 @@ import java.util.stream.Collectors;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final ReviewRepository reviewRepository;
+    private final UserRepository userRepository;
 
     public List<BookDto> getBookDtos(){
         List<Book> books = bookRepository.findAll();
@@ -54,5 +59,35 @@ public class BookService {
         double sum = book.getAverage() * book.getRatingCount() - target.getRating() + reviewDto.getRating();
         book.setAverage(sum / book.getRatingCount());
         bookRepository.save(book);
+    }
+
+    public List<ReviewResponseDto> getReviewsByIsbn(String isbn) {
+        Book book = bookRepository.findByIsbn(isbn);
+        List<Review> reviews = book.getReviews();
+        List<ReviewResponseDto> reviewResponseDtos = new ArrayList<>();
+
+        for (Review review : reviews) {
+            ReviewResponseDto reviewResponseDto = new ReviewResponseDto();
+            reviewResponseDto.setContent(review.getContent());
+            reviewResponseDto.setRating(review.getRating());
+            reviewResponseDto.setNickname(review.getUser().getNickname());
+            reviewResponseDtos.add(reviewResponseDto);
+
+        }
+        return reviewResponseDtos;
+    }
+
+    public List<BookDto> getMyBookDtos(String username) {
+        Long userId = userRepository.findByUsername(username).getId();
+        List<Review> reviews = reviewRepository.findByUserId(userId);
+
+        List<BookDto> bookDtos = new ArrayList<>();
+        for(Review review : reviews){
+            Book book = bookRepository.findById(review.getBook().getId()).orElse(null);
+            BookDto bookDto = new BookDto(book.getTitle(), book.getImage(), book.getAverage(), book.getIsbn());
+            bookDtos.add(bookDto);
+        }
+
+        return bookDtos;
     }
 }

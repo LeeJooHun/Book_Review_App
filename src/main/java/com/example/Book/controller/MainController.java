@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -24,6 +25,14 @@ public class MainController {
     @GetMapping("/books")
     public ResponseEntity<List<BookDto>> getBooks() {
         List<BookDto> bookDtos = bookService.getBookDtos();
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON_UTF8) // UTF-8 설정
+                .body(bookDtos);
+    }
+
+    @GetMapping("/mybooks")
+    public ResponseEntity<List<BookDto>> getMyBooks(@RequestParam String username) {
+        List<BookDto> bookDtos = bookService.getMyBookDtos(username);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON_UTF8) // UTF-8 설정
                 .body(bookDtos);
