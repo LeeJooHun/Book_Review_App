@@ -13,14 +13,19 @@ public class BookAndReviewService {
     private final BookService bookService;
     private final ReviewService reviewService;
 
-    public void save(ReviewDto reviewDto) {
+    public Long save(ReviewDto reviewDto) {
         Book book = bookService.save(reviewDto);
-        reviewService.save(reviewDto, book);
+        return reviewService.save(reviewDto, book);
     }
 
     public void update(ReviewDto reviewDto) {
         Review target = reviewService.findById(reviewDto.getId());
         bookService.update(target, reviewDto);
         reviewService.update(target, reviewDto);
+    }
+
+    public void delete(ReviewDto reviewDto) {
+        reviewService.delete(reviewDto);
+        bookService.delete(reviewDto);
     }
 }

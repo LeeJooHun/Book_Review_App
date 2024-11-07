@@ -15,4 +15,7 @@ public class User {
     private String nickname;
     private String username;
     private String password;
+    @Lob
+    @Column(name = "profile_image", columnDefinition = "LONGBLOB")
+    private byte[] profileImage;
 }

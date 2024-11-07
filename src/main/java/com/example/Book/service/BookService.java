@@ -63,11 +63,15 @@ public class BookService {
 
     public List<ReviewResponseDto> getReviewsByIsbn(String isbn) {
         Book book = bookRepository.findByIsbn(isbn);
+        if(book == null)
+            return null;
+
         List<Review> reviews = book.getReviews();
         List<ReviewResponseDto> reviewResponseDtos = new ArrayList<>();
 
         for (Review review : reviews) {
             ReviewResponseDto reviewResponseDto = new ReviewResponseDto();
+            reviewResponseDto.setId(review.getId());
             reviewResponseDto.setContent(review.getContent());
             reviewResponseDto.setRating(review.getRating());
             reviewResponseDto.setNickname(review.getUser().getNickname());
@@ -89,5 +93,18 @@ public class BookService {
         }
 
         return bookDtos;
+    }
+
+    public void delete(ReviewDto reviewDto) {
+        Book book = bookRepository.findByIsbn(reviewDto.getIsbn());
+        double sum = book.getAverage() * book.getRatingCount() - reviewDto.getRating();
+        book.setRatingCount(book.getRatingCount() - 1);
+
+        if(book.getRatingCount() == 0){
+            bookRepository.delete(book);
+        }
+        else {
+            book.setAverage(sum / book.getRatingCount());
+        }
     }
 }

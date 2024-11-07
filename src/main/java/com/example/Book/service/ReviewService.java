@@ -15,11 +15,12 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
 
-    public void save(ReviewDto reviewDto, Book book) {
+    public Long save(ReviewDto reviewDto, Book book) {
         Review review = reviewDto.toReview();
         review.setUser(userRepository.findByUsername(reviewDto.getUsername()));
         review.setBook(book);
-        reviewRepository.save(review);
+        Review savedReview = reviewRepository.save(review);
+        return savedReview.getId();
     }
 
     public void update(Review target, ReviewDto reviewDto){
@@ -31,5 +32,10 @@ public class ReviewService {
 
     public Review findById(Long id) {
         return reviewRepository.findById(id).orElse(null);
+    }
+
+    public void delete(ReviewDto reviewDto) {
+        Review target = reviewRepository.findById(reviewDto.getId()).orElse(null);
+        reviewRepository.delete(target);
     }
 }
