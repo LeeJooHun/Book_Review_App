@@ -50,7 +50,6 @@ public class UserService {
 
     public byte[] getProfileImage(String username) {
         User user = userRepository.findByUsername(username);
-        System.out.println(user.getProfileImage());
         return user.getProfileImage();
     }
 
