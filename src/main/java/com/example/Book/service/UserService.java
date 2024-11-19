@@ -59,4 +59,9 @@ public class UserService {
         reviewRepository.deleteByUserId(target.getId());
         return true;
     }
+
+    public byte[] getImageByNickname(String nickname) {
+        User user = userRepository.findByNickname(nickname);
+        return user.getProfileImage();
+    }
 }

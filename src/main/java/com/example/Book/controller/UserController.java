@@ -103,6 +103,19 @@ public class UserController {
                 .body(image);
     }
 
+    @GetMapping("/image/nickname")
+    public ResponseEntity<byte[]> getImageByNickname(@RequestParam String nickname) {
+        byte[] image = userService.getImageByNickname(nickname);
+
+        if (image == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(image);
+    }
+
     @Transactional
     @PostMapping("/user/delete")
     public ResponseEntity<String> deleteUser(@RequestParam String username) {
