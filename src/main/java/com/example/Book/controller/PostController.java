@@ -23,8 +23,8 @@ public class PostController {
     public ResponseEntity<List<PostSummaryResponse>> getPosts() {
         List<PostSummaryResponse> postSummaryResponses = postService.getPosts();
 
-        return ResponseEntity.ok().
-                contentType(MediaType.APPLICATION_JSON_UTF8)
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .body(postSummaryResponses);
     }
 

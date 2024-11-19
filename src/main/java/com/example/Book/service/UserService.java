@@ -64,4 +64,8 @@ public class UserService {
         User user = userRepository.findByNickname(nickname);
         return user.getProfileImage();
     }
+
+    public User findByNickname(String nickname) {
+        return userRepository.findByNickname(nickname);
+    }
 }

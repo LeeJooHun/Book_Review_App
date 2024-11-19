@@ -97,4 +97,8 @@ public class PostService {
             post.getContentList().add(contentItem);
         }
     }
+
+    public Post findById(Long postId) {
+        return postRepository.findById(postId).orElse(null);
+    }
 }
