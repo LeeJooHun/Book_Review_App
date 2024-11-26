@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,6 +77,7 @@ public class BookService {
             reviewResponseDto.setContent(review.getContent());
             reviewResponseDto.setRating(review.getRating());
             reviewResponseDto.setNickname(review.getUser().getNickname());
+            reviewResponseDto.setProfileImage(review.getUser().getProfileImage());
             reviewResponseDtos.add(reviewResponseDto);
 
         }
@@ -86,10 +89,14 @@ public class BookService {
         List<Review> reviews = reviewRepository.findByUserId(userId);
 
         List<BookDto> bookDtos = new ArrayList<>();
+        Set<Long> bookIds = new HashSet<>();
         for(Review review : reviews){
             Book book = bookRepository.findById(review.getBook().getId()).orElse(null);
-            BookDto bookDto = new BookDto(book.getTitle(), book.getImage(), book.getAverage(), book.getIsbn());
-            bookDtos.add(bookDto);
+            if (!bookIds.contains(book.getId())) {
+                BookDto bookDto = new BookDto(book.getTitle(), book.getImage(), book.getAverage(), book.getIsbn());
+                bookDtos.add(bookDto);
+                bookIds.add(book.getId()); // 책 ID를 추가된 목록에 저장
+            }
         }
 
         return bookDtos;
@@ -106,5 +113,23 @@ public class BookService {
         else {
             book.setAverage(sum / book.getRatingCount());
         }
+    }
+
+    public List<BookDto> getUserBookDtos(String nickname) {
+        Long userId = userRepository.findByNickname(nickname).getId();
+        List<Review> reviews = reviewRepository.findByUserId(userId);
+
+        List<BookDto> bookDtos = new ArrayList<>();
+        Set<Long> bookIds = new HashSet<>();
+        for(Review review : reviews){
+            Book book = bookRepository.findById(review.getBook().getId()).orElse(null);
+            if (!bookIds.contains(book.getId())) {
+                BookDto bookDto = new BookDto(book.getTitle(), book.getImage(), book.getAverage(), book.getIsbn());
+                bookDtos.add(bookDto);
+                bookIds.add(book.getId()); // 책 ID를 추가된 목록에 저장
+            }
+        }
+
+        return bookDtos;
     }
 }

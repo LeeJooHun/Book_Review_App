@@ -20,7 +20,7 @@ public class Review {
     private String content;
 
     @Column
-    private int rating;
+    private double rating;
 
     @Column
     private LocalDate date;

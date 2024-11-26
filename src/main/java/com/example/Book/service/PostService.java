@@ -38,7 +38,7 @@ public class PostService {
         return postResponseDto;
     }
 
-    public void createPost(Map<String, Object> postData) {
+    public Long createPost(Map<String, Object> postData) {
 
         String title = (String) postData.get("title");
         String username = (String) postData.get("username");
@@ -51,6 +51,40 @@ public class PostService {
         List<Map<String, String>> contentList = (List<Map<String, String>>) postData.get("contentList");
 
         for (Map<String, String> item : contentList) {
+            ContentItem contentItem = new ContentItem();
+            contentItem.setType(item.get("type"));
+
+            if ("text".equals(item.get("type"))) {
+                contentItem.setTextData(item.get("data"));
+            } else if ("image".equals(item.get("type"))) {
+                byte[] imageBytes = Base64.getDecoder().decode(item.get("data"));
+                contentItem.setImageData(imageBytes);
+            }
+
+            post.getContentList().add(contentItem);
+        }
+
+        Post savedPost = postRepository.save(post);
+        return savedPost.getId();
+    }
+
+    public void deletePost(Long id){
+        Post target = postRepository.findById(id).orElse(null);
+        postRepository.delete(target);
+    }
+
+    public void updatePost(Long postId, Map<String, Object> postData) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
+        String title = (String) postData.get("title");
+        post.setTitle(title);
+
+        post.getContentList().clear();
+
+        List<Map<String, String>> contentList = (List<Map<String, String>>) postData.get("contentList");
+        for (Map<String, String> item : contentList) {
+
             ContentItem contentItem = new ContentItem();
             contentItem.setType(item.get("type"));
 
@@ -65,37 +99,6 @@ public class PostService {
         }
 
         postRepository.save(post);
-    }
-
-    public void deletePost(Long id){
-        Post target = postRepository.findById(id).orElse(null);
-        postRepository.delete(target);
-    }
-
-    public void updatePost(Map<String, Object> postData) {
-        String title = (String) postData.get("title");
-        String username = (String) postData.get("username");
-        User user = userRepository.findByUsername(username);
-
-        Post post = new Post();
-        post.setTitle(title);
-        post.setUser(user); // 작성자 설정
-
-        List<Map<String, String>> contentList = (List<Map<String, String>>) postData.get("contentList");
-
-        for (Map<String, String> item : contentList) {
-            ContentItem contentItem = new ContentItem();
-            contentItem.setType(item.get("type"));
-
-            if ("text".equals(item.get("type"))) {
-                contentItem.setTextData(item.get("data"));
-            } else if ("image".equals(item.get("type"))) {
-                byte[] imageBytes = Base64.getDecoder().decode(item.get("data"));
-                contentItem.setImageData(imageBytes);
-            }
-
-            post.getContentList().add(contentItem);
-        }
     }
 
     public Post findById(Long postId) {

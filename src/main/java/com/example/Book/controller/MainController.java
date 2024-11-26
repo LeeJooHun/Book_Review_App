@@ -1,10 +1,7 @@
 package com.example.Book.controller;
 
 import com.example.Book.dto.BookDto;
-import com.example.Book.dto.ReviewDto;
-import com.example.Book.entity.Book;
 import com.example.Book.service.BookService;
-import com.example.Book.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +30,14 @@ public class MainController {
     @GetMapping("/mybooks")
     public ResponseEntity<List<BookDto>> getMyBooks(@RequestParam String username) {
         List<BookDto> bookDtos = bookService.getMyBookDtos(username);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON_UTF8) // UTF-8 설정
+                .body(bookDtos);
+    }
+
+    @GetMapping("/userbooks")
+    public ResponseEntity<List<BookDto>> getUserBooks(@RequestParam String nickname) {
+        List<BookDto> bookDtos = bookService.getUserBookDtos(nickname);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON_UTF8) // UTF-8 설정
                 .body(bookDtos);

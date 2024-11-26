@@ -37,10 +37,11 @@ public class PostController {
     }
 
     @PostMapping("/post/create")
-    public ResponseEntity<Map<String, String>> createPost(@RequestBody Map<String, Object> postData) {
-        postService.createPost(postData);
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Review created successfully");
+    public ResponseEntity<Map<String, Object>> createPost(@RequestBody Map<String, Object> postData) {
+        Long postId = postService.createPost(postData); // 생성된 postId 반환
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Post created successfully");
+        response.put("postId", postId); // postId 추가
 
         return ResponseEntity.ok(response);
     }
@@ -55,10 +56,10 @@ public class PostController {
     }
 
     @PostMapping("/post/update")
-    public ResponseEntity<Map<String, String>> updatePost(@RequestBody Map<String, Object> postData) {
-        postService.updatePost(postData);
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Review deleted successfully");
+    public ResponseEntity<Map<String, Object>> updatePost(@RequestParam Long id, @RequestBody Map<String, Object> postData) {
+        postService.updatePost(id, postData);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Review updated successfully");
 
         return ResponseEntity.ok(response);
     }

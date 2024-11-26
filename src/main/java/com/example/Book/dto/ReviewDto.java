@@ -16,7 +16,7 @@ public class ReviewDto {
     private String username;
     private String isbn;
     private String content;
-    private int rating;
+    private double rating;
     private String title;
     private String image;
 
